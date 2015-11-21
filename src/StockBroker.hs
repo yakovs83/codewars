@@ -6,7 +6,7 @@ data Result = Correct {quote::String,
                        price::Double, 
                        status::Char} | Incorrect String deriving (Show)
 
-parseQuote::String->Result
+-parseQuote::String->Result
 parseQuote q = let w = words q
                    lengthOk = length w == 4 --checking if number of data items is correct
                    priceOk = 
