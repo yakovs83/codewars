@@ -25,7 +25,7 @@ parseQuote str = let lengthOk = (length . words $ str) == 4
 splitOrder::String->[String]                             
 splitOrder "" = []
 splitOrder str = let (h,t) = break (==',') str
-                 in h:splitOrder (drop 1 t)
+                 in h:splitOrder (dropWhile (\x->x==','||x==' ') t)
 
 
 foldCorrect::(Double,Double)->Result->(Double,Double)
@@ -58,7 +58,7 @@ balanceStatement st = let ord = (groupBy grpFun) . sort $ map parseQuote (splitO
                       in case ord of
                           cor:icr:t -> addCorrect cor ++ "; " ++ addIncorrect icr
                           cor:[] -> addCorrect cor
-                          _ -> "There have been an error... :("
+                          _ -> "Buy: 0 Sell: 0"
                           
                      
                           
