@@ -28,15 +28,24 @@ splitOrder str = let (h,t) = break (==',') str
                  in h:splitOrder (drop 1 t)
 
 
-foldFun::(Double,Double)->Result->(Double,Double)
-foldFun acc (Correct _ qt pr st)
+foldCorrect::(Double,Double)->Result->(Double,Double)
+foldCorrect acc (Correct _ qt pr st)
     | st == "B" = (fst acc + (fromIntegral qt)*pr,snd acc)
     | st == "S" = (fst acc, snd acc + (fromIntegral qt)*pr)
     | otherwise = acc --not ideal, probably should throw here or somehow handle this case
 
 addCorrect::[Result]->String
-addCorrect cs = let (buy,sell) = foldl foldFun (0.0,0.0) cs
+addCorrect cs = let (buy,sell) = foldl foldCorrect (0.0,0.0) cs
                 in "Buy: " ++ (show . round $ buy) ++ " Sell: " ++ (show . round $ sell)
+
+foldIncorrect::String->Result->String
+foldIncorrect acc (Incorrect s) = acc ++ s ++ " ;"
+
+addIncorrect::[Result]->String
+addIncorrect ics = let n = length ics
+                       prefix = "Badly formed " ++ show n ++ ": "
+                       rest = foldl foldIncorrect "" ics
+                   in prefix ++ rest 
 
 grpFun::Result->Result->Bool
 grpFun x y = case (x,y) of
@@ -46,7 +55,12 @@ grpFun x y = case (x,y) of
 
 balanceStatement::String->String
 balanceStatement st = let ord = (groupBy grpFun) . sort $ map parseQuote (splitOrder st)
-                      in addCorrect $ head ord
+                      in case ord of
+                          cor:icr:t -> addCorrect cor ++ "; " ++ addIncorrect icr
+                          cor:[] -> addCorrect cor
+                          _ -> "There have been an error... :("
+                          
+                     
                           
 
 main = do
