@@ -45,7 +45,7 @@ grpFun x y = case (x,y) of
                 _ -> False
 
 balanceStatement::String->String
-balanceStatement st = let ord = groupBy grpFun $ map parseQuote (splitOrder st)
+balanceStatement st = let ord = (groupBy grpFun) . sort $ map parseQuote (splitOrder st)
                       in addCorrect $ head ord
                           
 
