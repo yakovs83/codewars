@@ -22,11 +22,19 @@ addIndex :: Matrix -> IMatrix
 addIndex m = let i = [[(x,y) | y <- [0..]] | x <- [0..]]
                  in zipWith (\ri rm -> zipWith (\ei em -> (ei,em)) ri rm) i m
 
---findTrue :: Matrix -> Index
---findTrue m = let mi = addIndex m
---                 in findTrueRec mi 0
+findTrue :: Matrix -> Index
+findTrue m = let im = addIndex m
+                 in findTrueRec im 1
 
---findTrueRec :: IMatrix -> 
+findTrueRec :: IMatrix -> Int -> Index
+findTrueRec im k = let cond ((i,j),_) = i+j<k
+                       lm = takeWhile (/= []) $ map (takeWhile cond) im
+                       rm = map (dropWhile cond) im
+                       in case searchFinite lm of
+                           Just ind -> ind
+                           Nothing -> findTrueRec rm (k+1)
 
 main = do
-    print . take 5 . map (take 5) $ addIndex (generate 1 1)
+    --print . take 5 . map (take 5) $ addIndex (generate 1 1)
+    print $ findTrue mt1
+    print $ findTrue mt2
