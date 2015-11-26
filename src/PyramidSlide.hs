@@ -36,9 +36,8 @@ pt2 = [[75],
 debugSlideDown :: [[Int]] -> [[Int]]
 debugSlideDown p = let clean r = case drop 3 r of
                                     [] -> r
-                                    _ -> head r : map (\(x,y) -> max x y) pmr
-                                    where mr = getMid r
-                                          pmr = pairUp $ tail mr
+                                    _ -> head r : map (\(x,y) -> max x y) pr
+                                    where pr = pairUp $ tail r
                        reducer r1 r2 = clean $ zipWith (+) (dupRow r1) (getMid . dupRow $ r2)
                        res pt = foldl' (reducer) (head pt) (tail pt)
                    in [res $ take n p | n <- [1..length p] ]
