@@ -11,6 +11,11 @@ dupRow r = concat . map (replicate 2) $ r
 getMid :: [Int] -> [Int]
 getMid r = init . tail $ r
 
+pairUp :: [Int]->[(Int,Int)]
+pairUp (h1:h2:t) = (h1,h2) : (pairUp t)
+pairUp (h:[]) = [(h,0)]
+pairUp [] = []
+
 pt = [[3], [7, 4], [2, 4, 6], [8, 5, 9, 3]]
 pt2 = [[75],
       [95, 64],
@@ -28,7 +33,19 @@ pt2 = [[75],
       [63, 66, 04, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31],
       [04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23]]
 
+debugSlideDown :: [[Int]] -> [[Int]]
+debugSlideDown p = let clean r = case drop 3 r of
+                                    [] -> r
+                                    _ -> head r : map (\(x,y) -> max x y) pmr
+                                    where mr = getMid r
+                                          pmr = pairUp $ tail mr
+                       reducer r1 r2 = clean $ zipWith (+) (dupRow r1) (getMid . dupRow $ r2)
+                       res pt = foldl' (reducer) (head pt) (tail pt)
+                   in [res $ take n p | n <- [1..length p] ]
+
 main = do
     print $ longestSlideDown pt
-    print $ longestSlideDown pt2 
+    mapM putStrLn . map show $ debugSlideDown pt
+    print $ longestSlideDown pt2
+    mapM putStrLn . map show $ debugSlideDown pt2
     
