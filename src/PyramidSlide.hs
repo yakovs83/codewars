@@ -4,10 +4,10 @@ import Data.List
 longestSlideDown :: [[Int]] -> Int
 longestSlideDown p = maximum $ foldl' (reducer) (head p) (tail p)
 
-clean :: [Int] -> [Int] --remove duplicates from the result
+clean :: [Int] -> [Int] --remove lengths of duplicate paths, leaving only max length
 clean r = case drop 3 r of
-            [] -> r
-            _ -> head r : map (\(x,y) -> max x y) pr
+            [] -> r --we don't do anything for the list that is shorter than 3 elements
+            _ -> head r : map (\(x,y) -> max x y) pr --otherwise we find pairwise max of the middle part of the list
             where pr = pairUp $ tail r
 
 reducer :: [Int] -> [Int] -> [Int] --produce the row with the current length of slides from two rows
@@ -19,7 +19,7 @@ dupRow r = concat . map (replicate 2) $ r
 getMid :: [Int] -> [Int] --gets the middle part of the list, everything but first and last element
 getMid r = init . tail $ r
 
-pairUp :: [Int]->[(Int,Int)]
+pairUp :: [Int]->[(Int,Int)] --groups up elements pairwise into tuples
 pairUp (h1:h2:t) = (h1,h2) : (pairUp t)
 pairUp (h:[]) = [(h,0)]
 pairUp [] = []
