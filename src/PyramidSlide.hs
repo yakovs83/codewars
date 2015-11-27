@@ -2,8 +2,16 @@ module PyramidSlide where
 import Data.List
 
 longestSlideDown :: [[Int]] -> Int
-longestSlideDown p = let reducer r1 r2 = zipWith (+) (dupRow r1) (getMid . dupRow $ r2)
-            in maximum $ foldl' (reducer) (head p) (tail p)
+longestSlideDown p = maximum $ foldl' (reducer) (head p) (tail p)
+
+clean :: [Int] -> [Int] --remove duplicates from the result
+clean r = case drop 3 r of
+            [] -> r
+            _ -> head r : map (\(x,y) -> max x y) pr
+            where pr = pairUp $ tail r
+
+reducer :: [Int] -> [Int] -> [Int] --produce the row with the current length of slides from two rows
+reducer r1 r2 = clean $ zipWith (+) (dupRow r1) (getMid . dupRow $ r2)
 
 dupRow :: [Int] -> [Int]
 dupRow r = concat . map (replicate 2) $ r
@@ -34,12 +42,7 @@ pt2 = [[75],
       [04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23]]
 
 debugSlideDown :: [[Int]] -> [[Int]]
-debugSlideDown p = let clean r = case drop 3 r of
-                                    [] -> r
-                                    _ -> head r : map (\(x,y) -> max x y) pr
-                                    where pr = pairUp $ tail r
-                       reducer r1 r2 = clean $ zipWith (+) (dupRow r1) (getMid . dupRow $ r2)
-                       res pt = foldl' (reducer) (head pt) (tail pt)
+debugSlideDown p = let res pt = foldl' (reducer) (head pt) (tail pt)
                    in [res $ take n p | n <- [1..length p] ]
 
 main = do
