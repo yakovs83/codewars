@@ -13,10 +13,10 @@ clean r = case drop 3 r of
 reducer :: [Int] -> [Int] -> [Int] --produce the row with the current length of slides from two rows
 reducer r1 r2 = clean $ zipWith (+) (dupRow r1) (getMid . dupRow $ r2)
 
-dupRow :: [Int] -> [Int]
+dupRow :: [Int] -> [Int] --duplicates list entries
 dupRow r = concat . map (replicate 2) $ r
 
-getMid :: [Int] -> [Int]
+getMid :: [Int] -> [Int] --gets the middle part of the list, everything but first and last element
 getMid r = init . tail $ r
 
 pairUp :: [Int]->[(Int,Int)]
