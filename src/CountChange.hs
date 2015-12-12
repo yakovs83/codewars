@@ -12,18 +12,17 @@ countChange a cs = let f c | a - c < 0 = 0
 
 countChange2::Int->[Int]->[[Int]]
 countChange2 _ [] = [[]]
-countChange2 a _ | a<0 = [[]]
+countChange2 a _ | a==0 = [[]]
 countChange2 a cs = do
     x <- map ((-) a) cs
+    guard (not $ x < 0)
     t <- countChange2 x cs
-    let res = a:x:t
-    --guard (x < 0)
-    --return x
+    let res = x:t
     return res
     
 
 main = do
-    print $ countChange 4 [1,2]
-    print $ countChange 10 [5,2,3]
-    print $ countChange 11 [5,7]
+    print $ countChange 5 [1,2]
+    --print $ countChange 10 [5,2,3]
+    --print $ countChange 11 [5,7]
     print $ countChange2 5 [1,2]
