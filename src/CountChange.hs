@@ -1,5 +1,6 @@
 module CountChange where
-import Control.Monad
+import           Control.Monad
+import           Data.List
 
 countChange::Int->[Int]->Int
 countChange _ [] = 0
@@ -10,19 +11,26 @@ countChange a cs = let f c | a - c < 0 = 0
                    in sum $ map f cs
 
 
-countChange2::Int->[Int]->[[Int]]
-countChange2 _ [] = [[]]
-countChange2 a _ | a==0 = [[]]
-countChange2 a cs = do
+waysToCount::Int->[Int]->[[Int]]
+waysToCount _ [] = [[]]
+waysToCount a _ | a==0 = [[]]
+waysToCount a cs = do
     x <- map ((-) a) cs
     guard (not $ x < 0)
-    t <- countChange2 x cs
-    let res = x:t
-    return res
-    
+    t <- waysToCount x cs
+    return $ (a-x):t
+
+countChange2::Int->[Int]->Int
+countChange2 a cs = let wc = waysToCount a cs
+                    in case wc of
+                        [[]] -> 0
+                        otherwise -> length . group . map sort $ wc
+
+tmp a cs = let wc = waysToCount a cs
+               in group . map sort $ wc
 
 main = do
     print $ countChange 5 [1,2]
-    --print $ countChange 10 [5,2,3]
-    --print $ countChange 11 [5,7]
-    print $ countChange2 5 [1,2]
+    print $ waysToCount 13 [5]
+    print $ countChange2 13 [5]
+    print $ tmp 13 [5]
