@@ -2,6 +2,7 @@ module CountChange where
 import           Control.Monad
 import           Data.List
 
+--first attempt, counts with repetitions
 countChange::Int->[Int]->Int
 countChange _ [] = 0
 countChange 0 _ = 0
@@ -17,20 +18,28 @@ waysToCount a _ | a==0 = [[]]
 waysToCount a cs = do
     x <- map ((-) a) cs
     guard (not $ x < 0)
-    t <- waysToCount x cs
+    let wtc = waysToCount x cs
+    t <- nub . map sort $ wtc
     return $ (a-x):t
 
+--works but runs for too long
 countChange2::Int->[Int]->Int
 countChange2 a cs = let wc = waysToCount a cs
                     in case wc of
                         [[]] -> 0
-                        otherwise -> length . group . map sort $ wc
+                        otherwise -> length . group . sort . map sort $ wc
 
 tmp a cs = let wc = waysToCount a cs
-               in group . map sort $ wc
+               in nub . map sort $ wc
+
+--more optimized version
+countChange3::Int->[Int]->Int
+countChange3 a cs = undefined 
+                        
+
 
 main = do
-    print $ countChange 5 [1,2]
-    print $ waysToCount 13 [5]
-    print $ countChange2 13 [5]
-    print $ tmp 13 [5]
+    print $ waysToCount 10 [3,2,4,1] 
+    print $ countChange2 10 [3,2,4,1]
+    print $ tmp 10 [3,2,4,1]
+ 
