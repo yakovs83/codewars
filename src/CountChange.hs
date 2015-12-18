@@ -12,16 +12,6 @@ countChange a cs = let f c | a - c < 0 = 0
                    in sum $ map f cs
 
 
-waysToCount::Int->[Int]->[[Int]]
-waysToCount _ [] = [[]]
-waysToCount a _ | a==0 = [[]]
-waysToCount a cs = do
-    x <- map ((-) a) cs
-    guard (not $ x < 0)
-    let wtc = waysToCount x cs
-    t <- nub . map sort $ wtc
-    return $ (a-x):t
-
 --works but runs for too long
 countChange2::Int->[Int]->Int
 countChange2 a cs = let wc = waysToCount a cs
@@ -32,14 +22,37 @@ countChange2 a cs = let wc = waysToCount a cs
 tmp a cs = let wc = waysToCount a cs
                in nub . map sort $ wc
 
+waysToCount::Int->[Int]->[[Int]]
+waysToCount _ [] = [[]]
+waysToCount 0 _  = [[]]
+waysToCount a cs = do
+    x <- map ((-) a) cs
+    guard (not $ x < 0)
+    let wtc = waysToCount x cs
+    t <- nub . map sort $ wtc
+    return $ (a-x):t
+
 --more optimized version
 countChange3::Int->[Int]->Int
 countChange3 a cs = undefined 
+
+ranges::Int->[Int]->[[Int]]
+ranges 0 _ = [[]]
+ranges a cs = map (\x->[1 .. quot a x]) cs
+
+comb::Int->[[Int]]->[[Int]]
+comb _ [] = [[]]
+comb a r = do
+    h <- head r
+    t <- comb a $ tail r
+    return (h:t)
                         
 
 
 main = do
-    print $ waysToCount 10 [3,2,4,1] 
-    print $ countChange2 10 [3,2,4,1]
-    print $ tmp 10 [3,2,4,1]
+    --print $ waysToCount 10 [3,2,4,1] 
+    --print $ countChange2 10 [3,2,4,1]
+    --print $ tmp 10 [3,2,4,1]
+    print $ ranges 5 [1,2]
+    print $ comb 5 (ranges 5 [1,2])
  
