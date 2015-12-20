@@ -39,9 +39,16 @@ countChange3 a cs = let r = map (\x->zipWith (*) [0..quot a x] $ repeat x) cs
                         comb r = [h:t| h<-head r, t<-comb $ tail r, h + sum t <= a]
                     in length $ filter (==a) $ map sum $ comb r
                     
+--further optimization
+countChange4 a cs = let r = map (\x->zipWith (*) [0..quot a x] $ repeat x) cs
+                        comb rem [] = if rem == 0 then [[]] else mzero
+                        comb rem r = [h:t| h<-head r, t<-comb (rem-h) $ tail r]
+                    in length $ comb a r
+                    
 main = do
     --print $ waysToCount 10 [3,2,4,1] 
     --print $ countChange2 10 [3,2,4,1]
     --print $ tmp 10 [3,2,4,1]
-    print $ countChange3 300 [500,5,50,100,20,200,10]
-    --print $ countChange3 10 [1,2,3] 
+    --print $ countChange4 300 [500,5,50,100,20,200,10]
+    --print $ countChange4 10 [1,2,3] 
+    print $ countChange4 2 [1] 
