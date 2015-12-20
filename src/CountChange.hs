@@ -1,6 +1,7 @@
 module CountChange where
 import           Control.Monad
 import           Data.List
+import Data.Function
 
 --first attempt, counts with repetitions
 countChange::Int->[Int]->Int
@@ -33,26 +34,14 @@ waysToCount a cs = do
     return $ (a-x):t
 
 --more optimized version
-countChange3::Int->[Int]->Int
-countChange3 a cs = undefined 
-
-ranges::Int->[Int]->[[Int]]
-ranges 0 _ = [[]]
-ranges a cs = map (\x->[1 .. quot a x]) cs
-
-comb::Int->[[Int]]->[[Int]]
-comb _ [] = [[]]
-comb a r = do
-    h <- head r
-    t <- comb a $ tail r
-    return (h:t)
-                        
-
-
+countChange3 a cs = let r = map (\x->zipWith (*) [0..quot a x] $ repeat x) cs
+                        comb [] = [[]]
+                        comb r = [h:t| h<-head r, t<-comb $ tail r, h + sum t <= a]
+                    in length $ filter (==a) $ map sum $ comb r
+                    
 main = do
     --print $ waysToCount 10 [3,2,4,1] 
     --print $ countChange2 10 [3,2,4,1]
     --print $ tmp 10 [3,2,4,1]
-    print $ ranges 5 [1,2]
-    print $ comb 5 (ranges 5 [1,2])
- 
+    print $ countChange3 300 [500,5,50,100,20,200,10]
+    --print $ countChange3 10 [1,2,3] 
